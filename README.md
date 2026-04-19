@@ -6,7 +6,13 @@ Rol: 202473606-k
 - revisar movimientos peones, caballo, alfil
 - revisar las vidas de las piezas
 - Ver disparo de granadas en diagonales
+- revisar arma especial
 
+## ARMA ESPECIAL: Sniper 2.0
+
+Dispara una bala en linea recta (como el sniper) con la diferencia que SI puede atravesar a las piezas y, además, su daño escala a medida que van pasando los niveles, en el nivel 1 se parte con 1 de daño, el nivel 2 y el nivel 3 hace 2 de daño (si en el nivel 3 hiciera 3 de daño mataría a la mayoría de las piezas en un solo disparom :P).
+
+Acepta disparos en todas direcciones.
 
 
 ## SUPOSICIONES:

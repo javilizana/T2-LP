@@ -169,4 +169,42 @@ bool granada(struct Juego *j, int dir_x, int dir_y) {
     }
     return true;
 }
-bool especial(struct Juego *j, int dir_x, int dir_y) { return true; }
+bool especial(struct Juego *j, int dir_x, int dir_y) {
+    // Limpiar marcas anteriores
+    for(int i = 0; i < j->t->H; i++){
+        for(int k = 0; k < j->t->W; k++){
+            j->marcas[i][k] = 0;
+        }
+    }
+
+    int dmg = (j->nivel_actual == 3) ? 2 : j->nivel_actual;
+    int cx = j->jugador->x + dir_x;
+    int cy = j->jugador->y + dir_y;
+    int impactos = 0;
+
+    printf("  [Rayo Perforante] Nivel %d: %d de daño por enemigo\n", j->nivel_actual, dmg);
+
+    // Avanza en línea recta atravesando todo hasta salir del tablero
+    while(cx >= 0 && cx < j->t->W && cy >= 0 && cy < j->t->H) {
+        j->marcas[cy][cx] = 1; // Marcar trayectoria
+
+        Celda *c = (Celda *)j->t->celdas[cy][cx];
+        if(c->pieza && c->pieza->hp > 0) {
+            c->pieza->hp -= dmg;
+            impactos++;
+            printf("  [Rayo Perforante] IMPACTO en (%d,%d): %c recibe %d de daño (HP: %d)\n", cx, cy, c->pieza->tipo, dmg, c->pieza->hp);
+
+            if(c->pieza->hp <= 0) {
+                printf("  [Rayo Perforante] %c eliminado!\n", c->pieza->tipo);
+                c->pieza = NULL;
+            }
+        }
+        cx += dir_x;
+        cy += dir_y;
+    }
+    
+    if(impactos == 0){
+        printf("  [Rayo Perforante] No impacto a nadie :c \n");
+    }
+    return true;
+}
