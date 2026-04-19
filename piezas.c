@@ -329,11 +329,49 @@ void mover_enemigos(Juego *juego) {
             ny = mejor_y;
         }
 
+        else if (p->tipo == 'Q'){
+            //8 direcciones: 4 ortogonales + 4 diagonales
+            int direcciones[8][2] = {
+                {0, +1}, { 0, -1}, {-1,  0}, {+1,  0},  // ortogonales
+                {-1, +1}, {+1, +1}, {-1, -1}, {+1, -1}   // diagonales  (Alfil)
+            };
 
+            int mejor_x = p->x;
+            int mejor_y = p->y;
+            int mejor_dist = abs(rx - p->x) + abs(ry - p->y);
 
+            for (int d = 0; d < 8; d++){
+                int dx = direcciones[d][0];
+                int dy = direcciones[d][1];
 
-        //AGREGAR AQUI LOS OTROS TIPOS DE PIEZAS
-        // REVISAR DSP
+                for(int paso = 1; paso <= 4; paso++){
+                    int tx = p->x + dx * paso;
+                    int ty = p->y + dy * paso;
+
+                    // Verificar límites del tablero
+                    if (tx < 0 || tx >= t->W || ty < 0 || ty >= t->H) break;
+
+                    Celda *dest = (Celda *)t->celdas[ty][tx];
+
+                    // Si hay una pieza que no sea el Rey => camino bloqueado
+                    if (dest->pieza != NULL && dest->pieza != juego->jugador) break;
+
+                    int dist = abs(rx - tx) + abs(ry - ty);
+
+                    if (dist < mejor_dist) {
+                        mejor_dist = dist;
+                        mejor_x = tx;
+                        mejor_y = ty;
+                    }
+
+                    // Si llegó al Rey, parar
+                    if (dest->pieza == juego->jugador) break;
+                }
+            }
+
+            nx = mejor_x;
+            ny = mejor_y;
+        }
 
         //verificams limites y colision con pieza != al rey:
         if (nx >= 0 && nx < t->W && ny >= 0 && ny < t->H){
@@ -346,25 +384,6 @@ void mover_enemigos(Juego *juego) {
 
         ((Celda *)t->celdas[p->y][p->x])->pieza = p;
     }
-    /*
-    for(int i = 0; i < t->H; i++){
-        for(int j = 0; j < t->W; j++){
-            Celda *c = (Celda*)t->celdas[i][j];
-            if(c->pieza && c->pieza->tipo == 'P'){
-                Pieza *p = c->pieza;
-                c->pieza = NULL; 
-                
-                if(p->y > ry) p->y--;
-                else if(p->y < ry) p->y++;
-                else if(p->x > rx) p->x--;
-                else if(p->x < rx) p->x++;
-
-                ((Celda*)t->celdas[p->y][p->x])->pieza = p;
-                return;
-            }
-        }
-    }
-    */
 }
 
 //Comprueba si alguna pieza enemiga ocupa la casilla del Rey

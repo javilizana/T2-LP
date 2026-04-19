@@ -9,7 +9,7 @@ int main(void) {
     // sin esto el juego sería predecible :p
 
     Juego juego;
-    juego.nivel_actual = 1;
+    juego.nivel_actual = 1; 
     juego.turno_enemigos = 0;
     juego.jugador = NULL;
     
@@ -37,8 +37,8 @@ int main(void) {
 
 
     //creamos tablero del nivel 1 (12x12):
-    juego.t = tablero_crear(12, 12);
-    spawn_nivel(&juego, 1);
+    juego.t = tablero_crear(6, 6); 
+    spawn_nivel(&juego, 1); 
 
     bool jugando = true;
     while(jugando) { // se ejecuta el juego hasta que el jugador decida salir (false)
