@@ -276,6 +276,59 @@ void mover_enemigos(Juego *juego) {
             ny = mejor_y;
         }
 
+        else if (p->tipo == 'T'){
+            // La Torre solo se mueve en turnos pares
+            if (juego->turno_enemigos % 2 != 0) {
+                // Turno impar: la Torre no se mueve, restaurar celda y continuar
+                ((Celda *)t->celdas[p->y][p->x])->pieza = p;
+                continue;
+            }
+
+            // Las 4 direcciones ortogonales
+            int ortogonales[4][2] = {
+                { 0, +1}, // arriba
+                { 0, -1}, // abajo
+                {-1,  0}, // izquierda
+                {+1,  0}  // derecha
+            };
+
+            int mejor_x = p->x;
+            int mejor_y = p->y;
+            int mejor_dist = abs(rx - p->x) + abs(ry - p->y);
+
+            for (int d = 0; d < 4; d++) {
+                int dx = ortogonales[d][0];
+                int dy = ortogonales[d][1];
+
+                // Avanza hasta 3 casillas en esa dirección
+                for (int paso = 1; paso <= 3; paso++) {
+                    int tx = p->x + dx * paso;
+                    int ty = p->y + dy * paso;
+
+                    // Verificar límites del tablero
+                    if (tx < 0 || tx >= t->W || ty < 0 || ty >= t->H) break;
+
+                    Celda *dest = (Celda *)t->celdas[ty][tx];
+
+                    // Si hay una pieza que no sea el Rey => camino bloqueado
+                    if (dest->pieza != NULL && dest->pieza != juego->jugador) break;
+
+                    int dist = abs(rx - tx) + abs(ry - ty);
+
+                    if (dist < mejor_dist) {
+                        mejor_dist = dist;
+                        mejor_x = tx;
+                        mejor_y = ty;
+                    }
+
+                    // Si llegó al Rey, parar
+                    if (dest->pieza == juego->jugador) break;
+                }
+            }
+            nx = mejor_x;
+            ny = mejor_y;
+        }
+
 
 
 

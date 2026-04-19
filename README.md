@@ -5,6 +5,8 @@ Rol: 202473606-k
 - ver porque los peones no se comen al rey cuando estan a los lados
 - revisar movimientos peones, caballo, alfil
 - revisar las vidas de las piezas
+- Ver disparo de granadas en diagonales
+
 
 
 ## SUPOSICIONES:
@@ -22,6 +24,7 @@ Si el rey se mueve a 2, 3, 4, 5, 6, 7 u 8 el Peón se quedaría estatico hasta q
 
 1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y), no se pueden mover hacia los lados.
 
+2. colisiones: en el caso de pieza1 choque con pieza2, pieza1 se moverá hasta chocar con pieza2, en el caso de los alfiles (por ejemplo) si esq su movimiento en diagonal es bloqueado por otra pieza, este se moverá lo más posible sin saltarla, o sea, se estancará hasta que tenga alguna celda (conveniente) vacía.
 
 
 
