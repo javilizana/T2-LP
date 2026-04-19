@@ -97,9 +97,11 @@ int main(void) {
                     else if(dir == 'C' || dir == 'c'){dx = 1; dy = -1;}
 
                     if (dx != 0 || dy != 0){
-                        juego.arsenal.disparar[idx](&juego, dx, dy);
-                        juego.arsenal.municion_actual[idx]--;
-                        turno_consumido = true;
+                        bool disparo_exitoso = juego.arsenal.disparar[idx](&juego, dx, dy);
+                        if (disparo_exitoso){
+                            juego.arsenal.municion_actual[idx]--;
+                            turno_consumido = true;
+                        } 
                     }else {
                         printf("  Direccion invalida. Turno no consumido.\n");
                     }

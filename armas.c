@@ -87,6 +87,86 @@ bool escopeta(struct Juego *j, int dir_x, int dir_y){
     return true;
 }
 
-bool francotirador(struct Juego *j, int dir_x, int dir_y) { return true; }
-bool granada(struct Juego *j, int target_x, int target_y) { return true; }
+bool francotirador(struct Juego *j, int dir_x, int dir_y) { 
+    // Limpiar marcas anteriores
+    for(int i = 0; i < j->t->H; i++){
+        for(int k = 0; k < j->t->W; k++){
+            j->marcas[i][k] = 0;
+        }
+    }
+    int cx = j->jugador->x + dir_x;
+    int cy = j->jugador->y + dir_y;
+
+    // Avanzar en línea recta hasta salir del tablero
+    while(cx >= 0 && cx < j->t->W && cy >= 0 && cy < j->t->H){
+        Celda *c = (Celda *)j->t->celdas[cy][cx];
+
+        j->marcas[cy][cx] = 1; // Marcar trayectoria (opcional, visual)
+
+        if(c->pieza && c->pieza->hp > 0){
+            c->pieza->hp -= 3;
+            printf("  [Sniper] IMPACTO en (%d,%d): %c recibe 3 de daño (HP: %d)\n", cx, cy, c->pieza->tipo, c->pieza->hp);
+            if(c->pieza->hp <= 0) {
+                printf("  [Sniper] %c eliminado!\n", c->pieza->tipo);
+                c->pieza = NULL;
+            }
+            break; // No atraviesa: para al primer impacto
+        }
+        cx += dir_x;
+        cy += dir_y;
+    }
+    return true; 
+}
+bool granada(struct Juego *j, int dir_x, int dir_y) {
+    // limpiamos marcas anteriores
+    for(int i = 0; i < j->t->H; i++){
+        for(int k = 0; k < j->t->W; k++){
+            j->marcas[i][k] = 0;
+        }
+    }
+    // rechaza diagonales 
+    if(dir_x != 0 && dir_y != 0) {
+        printf("  [Granada] Solo se puede lanzar en direcciones ortogonales (W/A/S/D).\n");
+        return false;
+    }
+
+    // Centro del impacto
+    int cx = j->jugador->x + dir_x * 3;
+    int cy = j->jugador->y + dir_y * 3;
+
+    // verificamos que el centro caiga dentro del tablero
+    if(cx < 0 || cx >= j->t->W || cy < 0 || cy >= j->t->H) {
+        printf("  [Granada] El lanzamiento cae fuera del tablero.\n");
+        return false;
+    }
+
+    printf("  [Granada] Explosion en (%d,%d)!\n", cx, cy);
+
+    // Explotar en area 3x3 centrada en (cx, cy)
+    for(int dy = -1; dy <= 1; dy++) {
+        for(int dx = -1; dx <= 1; dx++) {
+            int tx = cx + dx;
+            int ty = cy + dy;
+
+            // verificamos limites del tablero
+            if(tx < 0 || tx >= j->t->W || ty < 0 || ty >= j->t->H) continue;
+
+            // marcamos casilla afectada
+            j->marcas[ty][tx] = 1;
+
+            Celda *c = (Celda *)j->t->celdas[ty][tx];
+            if(c->pieza && c->pieza->hp > 0) {
+                c->pieza->hp -= 2;
+                printf("  [Granada] Daño en (%d,%d): %c recibe 2 de daño (HP: %d)\n",
+                       tx, ty, c->pieza->tipo, c->pieza->hp);
+
+                if(c->pieza->hp <= 0) {
+                    printf("  [Granada] %c eliminado!\n", c->pieza->tipo);
+                    c->pieza = NULL;
+                }
+            }  
+        }
+    }
+    return true;
+}
 bool especial(struct Juego *j, int dir_x, int dir_y) { return true; }
