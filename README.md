@@ -1,8 +1,28 @@
 Nombre: Javiera Lizana Chartier
 Rol: 202473606-k
 
+## REVISAR DSP:
+- ver porque los peones no se comen al rey cuando estan a los lados
+- revisar movimientos peones, caballo, alfil
+- revisar las vidas de las piezas
+
 
 ## SUPOSICIONES:
+REVISAR DESPUES!!!!!
+1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y) acercándose hacia la parte inferior del tablero y NO puden moverse hacia arriba (la parte superior deltablero). En el caso de que el peón quede debajo del rey estos se quedarán quietos hasta que el rey vuelva a estar debajo de ellos, recién ahí podrán moverse acercandose al rey y a la parte inferior del tablero. Por ejemplo:
+ 5 [ ][ ][6][7][8][ ]
+ 4 [ ][ ][4][R][5][ ]
+ 3 [ ][ ][1][2][3][ ]
+ 2 [ ][P][ ][ ][ ][ ]
+ 1 [ ][ ][ ][ ][ ][ ]
+ 0 [ ][ ][ ][ ][ ][ ]
+    0  1  2  3  4  5
+
+Si el rey se mueve a 2, 3, 4, 5, 6, 7 u 8 el Peón se quedaría estatico hasta que el Rey este dentro del alcance del peón para matarlo (el peón mata al rey) o hasta que el rey se encuentre en la parte inferior del tablero (el peón reanuda su movimiento acercandose al rey y a la parte inferior del tablero).
+
+1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y), no se pueden mover hacia los lados.
+
+
 
 
 ## INSTRUCCIONES:
