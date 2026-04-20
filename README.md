@@ -29,52 +29,12 @@ Si el Rey está en las casillas 1, 2 o 3, el Peón podrá atacrlo y ocupar esta 
 
 5. NO se implementaron lanzamientos diagonales de la Granada, esto debido a que el enunciado dice: "Se pueden eliminar los lanzamientos diagonales si así lo desean"
 
-
-
-
-
-
-
-
 ## INSTRUCCIONES:
 Para ejecutar:
 1. Asegurarse que estén todos los archivos en la misma carpeta
-2. En la terminal ejecutar: make
+2. (opcional) Solo por precaución ejecutar make clean para asegurarnos de que todo funcione bien
+3. En la terminal ejecutar: make
     Esto compilará el juego
-3. En la terminal ejecutar: ./juego
-    Para empezar el juego
-4. Al finalizar ejecutar 'make clean' 
-
-
-Fugas de memoria:
-valgrind --leak-check=full ./juego
-
-
-
-
-
-
-
-
-
-## ELIMINAR DSP!!!!!
-Para hacer el tar.gz
-- Desde el directorio PADRE de Tarea3LP_202473606-k crear:
-tar -czf Tarea3LP_202473606-k.tar.gz Tarea3LP_202473606-k/
-
-- verificar que este todo:
-tar -tzf Tarea3LP_202473606-k.tar.gz
-
-esto debería listar todos los archivos que estan en la carpeta# T3-LP
-
-
-
-Para hacer push:
-1. git status
-    -> Esto te muestra los archivos modificados.
-2. git add .
-    -> Para incluir todos los archivos modificados
-3. git commit -m "Descripción breve de lo que cambiaste"
-    -> Crear un commit
-4. git push
-    -> Subir los cambios a GitHub
+4. En la terminal ejecutar: ./juego
+    Para empezar el juego, o ejecutar 'valgrind --leak-check=full ./juego' para ejecutar el juego y revisar fugas de memoria
+5. Al finalizar ejecutar 'make clean' para limpiar todo
