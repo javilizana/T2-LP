@@ -4,12 +4,20 @@
 #include <time.h> //para usar srand
 #include "main.h"
 
+/*
+* Nombre: main
+* Parámetros: void (ninguno)
+* Retorno: int (0 si el programa finaliza con éxito)
+* Descripción: Función principal del juego. Inicializa las estructuras, variables, 
+    maneja el ciclo o bucle de turnos ingresados por el usuario, valida las acciones de 
+    movimiento o disparo, avanza de niveles y libera la memoria general al terminar.
+*/
 int main(void) {
     srand((unsigned)time(NULL)); //inicializa el aleatorio usando la hora actual como semilla
     // sin esto el juego sería predecible :p
 
     Juego juego;
-    juego.nivel_actual = 1; 
+    juego.nivel_actual = 1;
     juego.turno_enemigos = 0;
     juego.jugador = NULL;
     
@@ -37,7 +45,7 @@ int main(void) {
 
 
     //creamos tablero del nivel 1 (12x12):
-    juego.t = tablero_crear(6, 6); 
+    juego.t = tablero_crear(12, 12); 
     spawn_nivel(&juego, 1); 
 
     bool jugando = true;
@@ -51,7 +59,19 @@ int main(void) {
         printf(" Accion: ");
         
         char input;
+        
         if(scanf(" %c", &input) != 1) break;
+        
+        // Leer todo lo que quede en el buffer hasta el \n
+        int extra = 0;
+        int ch;
+        while((ch = getchar()) != '\n' && ch != EOF) extra++;
+
+        // Si había más caracteres, la acción es inválida
+        if(extra > 0) {
+            printf("  Accion invalida. Turno no consumido.\n");
+            continue;
+        }
         
         if (input == '0') {
             jugando = false;
@@ -97,31 +117,26 @@ int main(void) {
                     else if(dir == 'C' || dir == 'c'){dx = 1; dy = -1;}
 
                     if (dx != 0 || dy != 0){
-                        bool disparo_exitoso = juego.arsenal.disparar[idx](&juego, dx, dy);
-                        if (disparo_exitoso){
-                            juego.arsenal.municion_actual[idx]--;
-                            turno_consumido = true;
-                        } 
+                        // Verificar si el rey está en el borde y dispara hacia afuera
+                        int nx_disparo = juego.jugador->x + dx;
+                        int ny_disparo = juego.jugador->y + dy;
+
+                        if(nx_disparo < 0 || nx_disparo >= juego.t->W || ny_disparo < 0 || ny_disparo >= juego.t->H){
+                            printf("  Disparo fuera del tablero. Turno no consumido.\n");
+                        } else {
+                            bool disparo_exitoso = juego.arsenal.disparar[idx](&juego, dx, dy);
+                            if (disparo_exitoso){
+                                juego.arsenal.municion_actual[idx]--;
+                                turno_consumido = true;
+                            }
+                        }
                     }else {
                         printf("  Direccion invalida. Turno no consumido.\n");
                     }
                 }
             }
-            
-            /*
-            printf("Direccion de disparo (Q, W, E, A, S, D, Z, C): ");
-            char dir;
-            scanf(" %c", &dir);
-            int dx = 0, dy = 0;
-            if(dir == 'W' || dir == 'w') dy = 1;
-            else if(dir == 'S' || dir == 's') dy = -1;
-            else if(dir == 'A' || dir == 'a') dx = -1;
-            else if(dir == 'D' || dir == 'd') dx = 1;
-            
-            juego.arsenal.disparar[0](&juego, dx, dy);
-            turno_consumido = true;
-            */
-        }
+        } 
+        else { printf("  Accion invalida. Turno no consumido.\n" ); }
 
         //Aplicar movimiento del Rey si es valido
         if(es_movimiento) {
@@ -198,13 +213,6 @@ int main(void) {
         }
     }
 
-    /*
-    Liberacion de memoria en el orden:
-    1. Piezas enemigas (lista_enemigos_liberar)
-    2. Pieza del Rey (free directo) 
-    3. Tablero (tablero_liberar con firma original)
-    */
-    
     lista_enemigos_liberar(&juego.enemigos);
     if (juego.jugador){
         free(juego.jugador);

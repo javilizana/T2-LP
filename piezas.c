@@ -3,7 +3,14 @@
 #include "piezas.h"
 #include "main.h"
 
-//Agrega un puntero de pieza a la lista dinamica de enemigos del juego
+/*
+* Nombre: agregar_enemigo
+* Parámetros: Juego *juego (puntero al estado del juego), Pieza *p (puntero a la pieza 
+    enemiga creada)
+* Retorno: void (ninguno)
+* Descripción: Añade una nueva pieza enemiga a la lista dinámica de enemigos del juego. Si la 
+    capacidad de la lista se agota, duplica su tamaño utilizando realloc.
+*/
 static void agregar_enemigo(Juego *juego, Pieza *p){
     ListaEnemigos *le = &juego->enemigos;
     if (le->cantidad == le->capacidad){
@@ -14,24 +21,34 @@ static void agregar_enemigo(Juego *juego, Pieza *p){
     le->lista[le->cantidad++] = p;
 }
 
-//Reserva memoria para una Pieza, la inicializa y la coloca en el tablero
+/*
+* Nombre: crear_pieza
+* Parámetros: char tipo (carácter que identifica a la pieza), int hp (puntos de vida), int x 
+    (coordenada horizontal), int y (coordenada vertical), Tablero *t (puntero al tablero)
+* Retorno: Pieza * (puntero a la pieza asignada en la memoria dinámica)
+* Descripción: Reserva memoria dinámica para una pieza, inicializa sus atributos (como tipo, 
+    vida y coordenadas) y la posiciona en la celda correspondiente del tablero.
+*/
 static Pieza *crear_pieza(char tipo, int hp, int x, int y, Tablero *t){
     Pieza *p = malloc(sizeof(Pieza));
     p->tipo = tipo;
     p->hp = hp;
+    p->hp_max = hp; //guarda el HP máx
     p->x = x;
     p->y = y;
-    p->activo = 1;
     ((Celda *)t->celdas[y][x])->pieza = p;
     return p;
 }
 
-//Coloca al Rey y los enemigos del nivel en posiciones aleatorias validas
-//Todas las piezas enemigas quedan registradas en juego->enemigos
-
-
-
-
+/*
+* Nombre: spawn_nivel
+* Parámetros: Juego *juego (puntero al estado general del juego), int nivel (nivel actual a 
+    inicializar)
+* Retorno: void (ninguno)
+* Descripción: Genera y posiciona al Rey en una posición aleatoria en la fila inferior y 
+    distribuye a los enemigos correspondientes al nivel en posiciones aleatorias válidas en las 
+    filas superiores.
+*/
 void spawn_nivel(Juego *juego, int nivel) {
     Tablero *t = juego->t;
     
@@ -40,108 +57,87 @@ void spawn_nivel(Juego *juego, int nivel) {
     juego->enemigos.cantidad = 0;
     juego->enemigos.capacidad = 0;
 
-    //Rey en la fila inferior:
+    //Rey en la fila inferior (sin esquinas):
     int rey_x = 1 + rand() % (t->W -2);
     juego->jugador = crear_pieza('R', 10, rey_x, 0, t);
 
+    int x;
+
     if(nivel == 1){
-        //4 peones en fila 1:
+        //4 peones:
         for (int i = 0; i<4; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -2][x])->pieza != NULL);
             agregar_enemigo(juego, crear_pieza('P', 1, x, t->H - 2, t));
         }
 
-        //2 caballos en fila superior:
+        //2 caballos:
         for (int i = 0; i<2; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
-            agregar_enemigo(juego, crear_pieza('C',2 ,x ,t->H -1 ,t));
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
+            agregar_enemigo(juego, crear_pieza('C', 2, x, t->H - 1, t));
         }
 
-        //2 alfiles en fila superior:
+        //2 alfiles:
         for (int i = 0; i<2; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
-            agregar_enemigo(juego, crear_pieza('A',2 ,x ,t->H -1 ,t));
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
+            agregar_enemigo(juego, crear_pieza('A', 2, x, t->H - 1, t));
         }
 
     } else if(nivel == 2){
 
         //4 peones:
         for (int i = 0; i<4; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
-            agregar_enemigo(juego, crear_pieza('P',1 ,x ,t->H - 2 ,t));
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -2][x])->pieza != NULL);
+            agregar_enemigo(juego, crear_pieza('P', 1, x, t->H - 2, t));
         }
 
         //2 caballos:
         for (int i = 0; i<2; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
             agregar_enemigo(juego, crear_pieza('C',2 ,x ,t->H -1 ,t));
         }
 
         //2 torres:
         for (int i = 0; i<2; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
             agregar_enemigo(juego, crear_pieza('T',4 ,x ,t->H -1 ,t));
         }
     }else if(nivel == 3){
         //2 peones:
         for (int i = 0; i<2; i++){
-            int x = rand() % t->W;
-            while (((Celda *)t->celdas[1][x])->pieza != NULL){
-                x = rand() % t->W;
-            }
+            do {x = rand() % t->W;}
+            while (((Celda *)t->celdas[t->H -2][x])->pieza != NULL);
             agregar_enemigo(juego, crear_pieza('P',1 ,x ,t->H - 2 ,t));
         }
-
         //1 reina:
-        int x = rand() % t->W;
+        x = rand() % t->W;
         agregar_enemigo(juego, crear_pieza('Q', 3, x, t->H -1, t));
 
         //1 alfil:
-        x = (x+1) % t->W;
+        do {x = rand() % t->W;} 
+        while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
         agregar_enemigo(juego, crear_pieza('A', 2, x, t->H -1, t));
 
         //1 torre:
-        x = (x+2) % t->W;
+        do {x = rand() % t->W;} 
+        while (((Celda *)t->celdas[t->H -1][x])->pieza != NULL);
         agregar_enemigo(juego, crear_pieza('T', 4, x, t->H -1, t));
     }
-
-    /*
-    Pieza *rey = malloc(sizeof(Pieza));
-    rey->tipo = 'R';
-    rey->hp = 10;
-    rey->x = t->W / 2;
-    rey->y = 0;
-    juego->jugador = rey;
-    ((Celda*)t->celdas[rey->y][rey->x])->pieza = rey;
-
-    Pieza *peon = malloc(sizeof(Pieza));
-    peon->tipo = 'P';
-    peon->hp = 1;
-    peon->x = t->W / 2;
-    peon->y = t->H - 1;
-    ((Celda*)t->celdas[peon->y][peon->x])->pieza = peon;
-    */
 }
 
-//Libera cada Pieza enemiga y luego el arreglo de punteros
+/*
+* Nombre: lista_enemigos_liberar
+* Parámetros: ListaEnemigos *le (puntero a la estructura que contiene el arreglo dinámico de 
+    piezas enemigas)
+* Retorno: void (ninguno)
+* Descripción: Recorre la lista de enemigos y libera la memoria (free) de cada pieza, para 
+    finalmente liberar el arreglo de punteros principal y reiniciar la capacidad.
+*/
 void lista_enemigos_liberar(ListaEnemigos *le){
     for(int i = 0; i< le->cantidad; i++){
         free(le->lista[i]);
@@ -154,8 +150,14 @@ void lista_enemigos_liberar(ListaEnemigos *le){
     le->capacidad = 0;
 }
 
-//Mueve cada pieza enemiga viva un paso hacia el Rey segun su tipo
-//Implementa el Peon (ortogonal) con deteccion de colision
+/*
+* Nombre: mover_enemigos
+* Parámetros: Juego *juego (puntero al estado del juego)
+* Retorno: void (ninguno)
+* Descripción: Itera por cada pieza enemiga viva en el tablero y ejecuta su lógica de 
+    movimiento y "pathfinding" hacia el Rey respetando las reglas de colisión y de desplazamiento 
+    según el tipo de pieza (Peón, Caballo, Alfil, Torre, Reina).
+*/
 void mover_enemigos(Juego *juego) {
     Tablero *t = juego->t;
     int rx = juego->jugador->x;
@@ -172,25 +174,16 @@ void mover_enemigos(Juego *juego) {
         int ny = p->y;
 
         if (p->tipo == 'P'){
-            // dy apunta hacia el Rey en Y
-            int dy = (ry > p->y) ? 1 : -1;
-
-            //El peón se congela si el Rey está en su misma fila o SOBRE el peón
-            if (ry == p->y) {
-                p->activo = 0;
+            int dy = -1; //movimiento siempre hacia abajo
+            
+            //Ataca al rey solo si está bajo el (ya sea diagonalmnte u ortogonalmente)
+            if (ry == p->y + dy && abs(rx - p->x) <= 1) {
+                //Se mueve hasta donde está el Rey (para atacarlo):
+                nx = rx;
+                ny = ry;
             } else {
-                p->activo = 1;
-            }
-
-            if (p->activo) {
-                // Ataque diagonal frontal: Rey a 1 casilla diagonal en dirección dy
-                if (abs(rx - p->x) == 1 && ry == p->y + dy) {
-                    nx = rx;
-                    ny = p->y + dy;
-                } else {
-                    // Avance recto en dirección dy (también cubre ataque frontal directo)
-                    ny = p->y + dy;
-                }
+                // Avance normal:
+                ny = p->y + dy;
             }
         }
 
@@ -386,8 +379,13 @@ void mover_enemigos(Juego *juego) {
     }
 }
 
-//Comprueba si alguna pieza enemiga ocupa la casilla del Rey
-//Retorna false si el Rey fue capturado, true si sigue vivo
+/*
+* Nombre: verificar_estado_rey
+* Parámetros: Juego *juego (puntero al estado general del juego)
+* Retorno: bool (true si el Rey sigue vivo, false si fue alcanzado/capturado por un enemigo)
+* Descripción: Comprueba si alguna de las piezas enemigas en el tablero logró moverse a la 
+    misma casilla que ocupa el Rey actualmente.
+*/
 bool verificar_estado_rey(Juego *juego) {
     int rx = juego->jugador->x;
     int ry = juego->jugador->y;

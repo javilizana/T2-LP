@@ -4,8 +4,14 @@
 #include "piezas.h"
 #include "main.h"
 
-//Reserva memoria en el heap para un tablero de ancho x alto celdas
-//Usa triple puntero void***: celdas[y][x] apunta a una Celda en el heap
+/*
+* Nombre: tablero_crear
+* Parámetros: int ancho (número de columnas del tablero), int alto (número de filas del tablero)
+* Retorno: struct Tablero* (puntero a la estructura del tablero generado)
+* Descripción: Reserva la memoria dinámica para el tablero bidimensional mediante un 
+    triple puntero (void ***) organizándolo en filas, columnas y asignando memoria a cada 
+    Celda individual.
+*/
 struct Tablero* tablero_crear(int ancho, int alto) {
     Tablero *t = malloc(sizeof(Tablero));
     t->W = ancho;
@@ -28,7 +34,13 @@ struct Tablero* tablero_crear(int ancho, int alto) {
     return t;
 }
 
-//Renderiza el tablero en consola de arriba hacia abajo con HUD
+/*
+* Nombre: tablero_imprimir
+* Parámetros: Juego *juego (puntero al estado del juego)
+* Retorno: void (ninguno)
+* Descripción: Dibuja la interfaz visual (HUD) y el tablero actual en consola. Muestra las piezas, 
+    las marcas de ataque, balas disponibles, HP, información del nivel y las opciones de acciones permitidas.
+*/
 void tablero_imprimir(Juego *juego) {
     Tablero *t = juego->t;
 
@@ -39,25 +51,13 @@ void tablero_imprimir(Juego *juego) {
         if(p && p->hp > 0) enemigos_restantes++;
     }
 
-    //REVISAR DSP
-    /*
-    for(int i=0; i< t->H; i++) {
-        for (int j = 0; j < t->W; j++){
-            Celda *c = (Celda*)t -> celdas[i][j];
-            if(c->pieza != NULL && c->pieza->tipo != 'R'){
-                enemigos_restantes++;
-            } 
-        }
-    }
-    */
-
     //Dibujar HUD superior:
     printf("\n======================================================\n");
     printf("Nivel: %d | Enemigos restantes: %d\n", juego->nivel_actual, enemigos_restantes);
     printf("Arsenal: [1] Escopeta (%d/%d)  | [2] Sniper (%d/%d)\n", 
            juego->arsenal.municion_actual[0], juego->arsenal.municion_maxima[0],
            juego->arsenal.municion_actual[1], juego->arsenal.municion_maxima[1]);
-    printf("         [3] Granada (%d/%d)   | [4] Especial (%d/%d)\n", 
+    printf("         [3] Granada (%d/%d)   | [4] Sniper 2.0 (%d/%d)\n", 
            juego->arsenal.municion_actual[2], juego->arsenal.municion_maxima[2],
            juego->arsenal.municion_actual[3], juego->arsenal.municion_maxima[3]);
     printf("\n======================================================\n");
@@ -70,43 +70,38 @@ void tablero_imprimir(Juego *juego) {
             Celda *c = (Celda *)t->celdas[i][j];
             if(c->pieza){
                 printf("[%c]", c->pieza->tipo);
-            } else if(juego->marcas[i][j] == 1){
+            } 
+            else if (juego->marcas[i][j] == 1){ 
                 printf("[X]");
-            }else{
+            } else if(juego->marcas[i][j] == 2){
+                printf("[-]");
+            } else{
                 printf("[ ]");
-            }
+            } 
         }
         printf("\n");
     }
 
-    //Imprimir el eje x en la pte inferior:
-    printf("  ");
+    //Imprime el n° de columna:
+    printf("   ");
     for(int j = 0; j< t->W; j++){
         printf("%2d ", j);
     }
     printf("\n\n");
 
-    //REVISAR DSP CON CUAL QUEDARME
     //Dibujar HUD inferior con controles:
-    printf(" Disparo: [1] Escopeta  [2] Sniper  [3] Granada  [4] Especial\n");
+    printf(" Disparo: [1] Escopeta  [2] Sniper  [3] Granada  [4] Snipper 2.0\n");
     printf(" Mover: [Q][W][E] / [A][ ][D] / [Z][S][C]  |  [0] Salir\n\n");
-
-    /*
-    printf("ACCIONES: Disparo: [1] Escopeta [2] Sniper [3] Granada [4] Especial\n");
-    printf("Movimiento:\n");
-    printf("[Q][W][E]\n");
-    printf("[A] R [D]\n");
-    printf("[Z][X][C]\n\n");
-    */
 
 }
 
 /*
-- Libera UNICAMENTE la memoria del tablero: cada Celda, cada fila y el struct Tablero
-- NO libera las piezas, esas son responsabilidad del Juego (se liberan desde main antes de 
-llamar esta funcion). 
-- Por eso se pone c->pieza = NULL antes de liberar, para dejar claro que la celda no es 
-dueña de la pieza y evitar doble free accidental
+* Nombre: tablero_liberar
+* Parámetros: Tablero *tablero (puntero al tablero que se desea liberar)
+* Retorno: void (ninguno)
+* Descripción: Libera de manera segura toda la memoria heap utilizada estrictamente por la 
+    estructura Tablero y sus Celdas bidimensionales, sin afectar directamente la memoria de 
+    las piezas para evitar conflictos (doble free).
 */
 void tablero_liberar(Tablero *tablero) {
     if(!tablero) return;

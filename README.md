@@ -1,36 +1,38 @@
 Nombre: Javiera Lizana Chartier
 Rol: 202473606-k
 
-## REVISAR DSP:
-- ver porque los peones no se comen al rey cuando estan a los lados
-- revisar movimientos peones, caballo, alfil
-- revisar las vidas de las piezas
-- Ver disparo de granadas en diagonales
-- revisar arma especial
-
 ## ARMA ESPECIAL: Sniper 2.0
 
-Dispara una bala en linea recta (como el sniper) con la diferencia que SI puede atravesar a las piezas y, además, su daño escala a medida que van pasando los niveles, en el nivel 1 se parte con 1 de daño, el nivel 2 y el nivel 3 hace 2 de daño (si en el nivel 3 hiciera 3 de daño mataría a la mayoría de las piezas en un solo disparom :P).
+Dispara una bala en linea recta (como el sniper) con la diferencia que SI puede atravesar a las piezas y, además, su daño escala a medida que van pasando los niveles, en el nivel 1 se parte con 1 de daño, el nivel 2 hace 2 de daño y en el nivel 3 hace 3 de daño.
 
-Acepta disparos en todas direcciones.
+El Sniper 2.0 acepta disparos en todas direcciones, además, marca con un "-"  las casillas de "recorrido" y marca con una "X" las casillas de impacto (al igual que el Sniper normal).
 
 
 ## SUPOSICIONES:
-REVISAR DESPUES!!!!!
-1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y) acercándose hacia la parte inferior del tablero y NO puden moverse hacia arriba (la parte superior deltablero). En el caso de que el peón quede debajo del rey estos se quedarán quietos hasta que el rey vuelva a estar debajo de ellos, recién ahí podrán moverse acercandose al rey y a la parte inferior del tablero. Por ejemplo:
- 5 [ ][ ][6][7][8][ ]
- 4 [ ][ ][4][R][5][ ]
- 3 [ ][ ][1][2][3][ ]
- 2 [ ][P][ ][ ][ ][ ]
- 1 [ ][ ][ ][ ][ ][ ]
- 0 [ ][ ][ ][ ][ ][ ]
-    0  1  2  3  4  5
 
-Si el rey se mueve a 2, 3, 4, 5, 6, 7 u 8 el Peón se quedaría estatico hasta que el Rey este dentro del alcance del peón para matarlo (el peón mata al rey) o hasta que el rey se encuentre en la parte inferior del tablero (el peón reanuda su movimiento acercandose al rey y a la parte inferior del tablero).
+1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y), no se pueden mover hacia los lados, la excepción de esto es al momento de atacar, los peones podrán moverse de forma diagonal u rotogonal hacia ABAJO para atacar al Rey. Por ejemplo:
+ 
+ 4 [ ][ ][ ][ ][ ]
+ 3 [ ][ ][ ][ ][ ]
+ 2 [ ][ ][P][ ][ ]
+ 1 [ ][1][2][3][ ]
+ 0 [ ][ ][ ][ ][ ]
+    0  1  2  3  4 
+Si el Rey está en las casillas 1, 2 o 3, el Peón podrá atacrlo y ocupar esta posicion. Si el Rey no está en ninguna de estas casillas, el Peón se moverá hasta llegar al límite inferior del tablero.
 
-1. Como se dijo en el foro, los peones solo pueden moverse según las reglas del ajedrez, o sea, solo se puden mover VERTICALMENTE (por el eje y), no se pueden mover hacia los lados.
 
-2. colisiones: en el caso de pieza1 choque con pieza2, pieza1 se moverá hasta chocar con pieza2, en el caso de los alfiles (por ejemplo) si esq su movimiento en diagonal es bloqueado por otra pieza, este se moverá lo más posible sin saltarla, o sea, se estancará hasta que tenga alguna celda (conveniente) vacía.
+2. colisiones: en el caso de pieza1 choque con pieza2, pieza1 se moverá hasta chocar con pieza2 (a excepción de los caballos que los pueden saltar), en el caso de los alfiles (por ejemplo) si esq su movimiento en diagonal es bloqueado por otra pieza, este se moverá lo más posible sin saltarla, o sea, se estancará hasta que tenga alguna celda (conveniente) vacía.
+
+3. En el caso de que se ingrese como input algo no válido, como por ejemplo "aaaaaaaaa", "hcsdjckh", "a ", etc. se imprimirá por pantalla un mensaje indicando que es una acción inválida y no se gastará turno, por otro lado, si se ingresa " a" (espacio + tecla válida) esto si será aceptado (no tuve tiempo de arreglarlo para que no aceptara o para que aceptara espacio + tecla válida o tecla valida + espacio :c).
+
+4. En el caso que se dispare hacia alguno de los bordes del tablero saldrá un mensaje diciendo que el disparo estaba fuera del tablero y no consumirá turno/munición.
+
+5. NO se implementaron lanzamientos diagonales de la Granada, esto debido a que el enunciado dice: "Se pueden eliminar los lanzamientos diagonales si así lo desean"
+
+
+
+
+
 
 
 
